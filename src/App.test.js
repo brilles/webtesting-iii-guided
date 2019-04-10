@@ -1,14 +1,59 @@
 import React from 'react';
-import banana from 'react-test-renderer'; // 1: install this npm module as a dev dependency
+import { render, fireEvent } from 'react-testing-library';
+import renderer from 'react-test-renderer';
 
-import App from './App';
+import App, { Greeter } from './App';
 
 describe('<App />', () => {
-  // 2. write this test
-  it('matches snapshot', () => {
-    const tree = banana.create(<App />); // generates a DOM tree
+  // .only
+  it.skip('matches snapshot', () => {
+    const tree = renderer.create(<App />).toJSON();
 
-    // snapshots are a JSON representation of the DOM tree
-    expect(tree.toJSON()).toMatchSnapshot();
+    expect(tree).toMatchSnapshot();
+  });
+
+  // "idea for another test" until CRA is updated to current Jest then => it.todo('another test');
+
+  describe('mocking', () => {
+    it('its mocking me', () => {
+      const mock = jest.fn();
+
+      const result = mock();
+      mock();
+
+      expect(result).toBeUndefined();
+      expect(mock).toHaveBeenCalledTimes(2);
+    });
+
+    it.only('controls the mock', () => {
+      const mock = jest.fn(() => 'hello');
+
+      const result = mock();
+
+      expect(result).toBe('hello');
+      expect(mock).toHaveBeenCalledTimes(1);
+      expect(mock).toHaveBeenCalledWith('smile');
+    });
+  });
+});
+
+describe('<Greeter />', () => {
+  it.skip('should save when clicking save button', () => {
+    const { getByText } = render(<App />);
+
+    const saveButton = getByText(/Save/i);
+    fireEvent.click(saveButton);
+
+    getByText(/saving/i);
+  });
+
+  it.skip('should save when clicking save button', () => {
+    const saveMock = jest.fn();
+    const { getByText } = render(<Greeter save={saveMock} />);
+
+    const saveButton = getByText(/Save/i);
+    fireEvent.click(saveButton);
+
+    expect(saveMock).toHaveBeenCalledTimes(1);
   });
 });
