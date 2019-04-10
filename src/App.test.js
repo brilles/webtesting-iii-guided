@@ -1,8 +1,16 @@
 import React from 'react';
-import { render, fireEvent } from 'react-testing-library';
+import { render, fireEvent, cleanup } from 'react-testing-library';
 import renderer from 'react-test-renderer';
+// import 'react-testing-library/cleanup-after-each';
 
 import App, { Greeter } from './App';
+
+afterEach(() => {
+  cleanup();
+  console.log(document.body.outerHTML);
+});
+
+// afterAll()
 
 describe('<App />', () => {
   // .only
@@ -25,7 +33,7 @@ describe('<App />', () => {
       expect(mock).toHaveBeenCalledTimes(2);
     });
 
-    it.only('controls the mock', () => {
+    it.skip('controls the mock', () => {
       const mock = jest.fn(() => 'hello');
 
       const result = mock();
@@ -38,7 +46,7 @@ describe('<App />', () => {
 });
 
 describe('<Greeter />', () => {
-  it.skip('should save when clicking save button', () => {
+  it('should save when clicking save button', () => {
     const { getByText } = render(<App />);
 
     const saveButton = getByText(/Save/i);
@@ -47,7 +55,7 @@ describe('<Greeter />', () => {
     getByText(/saving/i);
   });
 
-  it.skip('should save when clicking save button', () => {
+  it('should save when clicking save button', () => {
     const saveMock = jest.fn();
     const { getByText } = render(<Greeter save={saveMock} />);
 
